@@ -13,10 +13,13 @@
 export default {
   name: 'pageProfil',
   mounted(){
-    console.log(this.$store.state.userInfos)
+    
     console.log(this.$store.state)
+    console.log(this.$store.state.userInfos)
     //?????????????????????????????????????
-    this.$store.dispatch('getOneUser');
+    this.$store.dispatch('getOneUser')
+    
+    
     if(this.$store.state.user.userId == '' || this.$store.state.user.token == ''){
       this.$router.push('/') 
     }

@@ -18,7 +18,7 @@ export default createStore({
       token: ''
     },
     posts: '',
-    userInfos:''
+    userInfos: ''
   },
   mutations: {
    testStatus: (state, status) => {
@@ -28,11 +28,14 @@ export default createStore({
     urlApi.defaults.headers.common['Authorization'] = 'Bearer ' + user.token;
      state.user = user
    },
-   getAllPosts: (state, posts) => {
+   posts: (state, posts) => {
      state.posts = posts
    },
    userInfos: (state, userInfos) => {
      state.userInfos = userInfos
+   },
+   putOneUser: (state,userInfos) => {
+    state.userInfos = userInfos
    }
   },
   actions: {
@@ -72,24 +75,48 @@ export default createStore({
       urlApi.get('post')
       .then(response => {
         console.log(response.data)
-        commit('getAllPosts', response.data)
+        commit('posts', response.data)
+      })
+      .catch(error => console.log(error))
+    },
+
+    createPost: ({commit}, Data) => {
+      
+      
+        urlApi.post('post/post', Data)
+        .then(response => {
+          
+          commit('posts', response.data)
+          
+          console.log(response.data)
+      })
+        .catch(error => {
+          console.log(error)
+        })
+      
+    },
+
+    updateOneUser({commit, state}) {
+      const userId = this.state.user.userId
+      urlApi.put(`user/${userId}`, state.userInfos[0])
+      .then(response => {
+        console.log(response.data)
+        commit('userInfos', response.data)
       })
       .catch(error => console.log(error))
     },
 
     getOneUser({commit}) {
-      return new Promise((resolve, reject) => {
         const userId = this.state.user.userId
         urlApi.get(`user/${userId}`)
         .then(response => {
-          resolve(response)
           //console.log(response.json)
           commit('userInfos', response.data)
       })
-        .catch(error => {
-          reject(error)
+        .catch(error => {console.log(error)
+         
           
-        })
+        
       })
       
       
