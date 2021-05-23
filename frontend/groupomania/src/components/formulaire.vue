@@ -72,7 +72,7 @@ export default {
 
 </script>
 
-<style>
+<style scoped>
 form{
 	width: 500px;
 	padding: 30px;
@@ -110,6 +110,10 @@ input
 	margin-bottom: 10px;
 	font-size: 16px;
 	height: 45px;
+}
+
+input:focus{
+  border: 2px solid rgb(236, 116, 116) ;
 }
 
 button{

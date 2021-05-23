@@ -1,7 +1,6 @@
 <template>
   <div class="about">
     <navigation/>
-    <h1>Posts récents</h1>
     <posts/>  
   </div>
 </template>
@@ -13,8 +12,9 @@
 export default {
   name: 'About',
   mounted(){
-    console.log(this.$store.state.posts)
+    
     this.$store.dispatch('getPosts');
+    console.log(this.$store.state.posts)
     if(this.$store.state.user.userId == '' || this.$store.state.user.token == ''){
       this.$router.push('/')  
     }
