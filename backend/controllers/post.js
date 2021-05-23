@@ -1,14 +1,15 @@
 const connection = require("../config/db.config.js");
 
 exports.createPost = (req, res) => {
+    
+    //const test = JSON.parse(req.body)
     const Post = {
-        "user":req.body.user,
-        "title":req.body.title,
-        "description":req.body.description,
-        "picture":req.body.picture,
-        "added_date":req.body.added_date,
-        "modif_date":req.body.modif_date,
+        "title": req.body.title,
+        "description": req.body.description,
+        "picture": req.file.filename,
+        "user": req.body.userId
     }
+    console.log(Post.picture)
     connection.query('INSERT INTO post SET ?', Post, function(err, result){
         if(err) {
             return res.status(401).json({err});
