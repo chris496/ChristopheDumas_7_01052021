@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
-
+const path = require('path');
 
 const app = express();
 
@@ -17,6 +17,9 @@ app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
     next();
   });
+
+// fichier static pour le traitement des images
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 const userRoutes = require('./routes/user');
 const authRoutes = require('./routes/auth');
