@@ -5,7 +5,6 @@
       <img src="../../public/images/icon-left-font.png"/>
     </div>
     <nav class="navigation">
-        <!--<i class="fas fa-users" title="Accueil"></i>-->
         <font-awesome-icon :icon="['fas', 'users']" class="icon" title="Accueil" @click="posts"/>
         <font-awesome-icon :icon="['fas', 'address-card']" class="icon" title="Profil" @click="profil"/>
         <font-awesome-icon :icon="['fas', 'sign-out-alt']" class="icon" title="Déconnexion" @click="logout"/>
@@ -24,9 +23,6 @@ export default {
          
      }
  }, 
- computed:{
-   
-  },
  methods: {
      posts: function(){
          this.$router.push('/about')

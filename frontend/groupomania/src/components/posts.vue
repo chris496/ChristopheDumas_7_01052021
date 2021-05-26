@@ -1,111 +1,100 @@
 <template>
-
   <div class="all_cards">
+    <!-- affichage des posts -->
     <div v-for="(post,idx) in posts" v-bind:key="idx" class="cards">
       <div class="card">
         <div class="topcard">
-          <span>{{ post.firstname }}</span>
-          <span>{{ post.added_date }}date</span>
+          <div><img class="logo" :src="post.picture"/></div>
+        <div class="infos">
+          <div class="name">{{ post.firstname }} {{ post.lastname }}</div>
+          <div class="title">{{ post.title }}titre</div>
         </div>
+          <div class="date">{{ post.added_date }}</div>
+        </div>
+
         <div class="bodycard">
-          {{ post.description }}
+          <span>{{ post.description }}</span>
+          <img :src="post.picture"/>
         </div>
+
         <div class="bottomcard">
-          <span>{{ post.firstname }}like</span>
-          <span>{{ post.firstname }}commentaires</span>
+          <font-awesome-icon :icon="['far', 'comment-dots']" class="icon" title="Afficher/créer commentaires" @click.prevent="displayComments()"/>
+          <font-awesome-icon :icon="['fas', 'trash-alt']" class="icon" title="Supprimer le post" v-if="post.user == auth.userId" @click.prevent="deletePost(post)"/>
+          <font-awesome-icon :icon="['far', 'thumbs-up']" class="icon" title="Liker le post"/>
+        </div>
+
+    <!-- affichage des commentaires -->
+      <div v-if="mode == 'comments'" class="comment">
+        <span class="title-comment">Laisser un commentaire</span><br>
+        <textarea v-model="description"/>
+        <span>{{description}}</span>
+        <button @click.prevent="newComment(comment)">Publier</button>
+
+        <div class="comments-post">
+          commentaires
+        </div>
+        <div>
+          commentaires
+        </div>
+        <div>
+          commentaires
         </div>
       </div>
-      <div class="comment">
-        <input/>
-        <button>Supprimer</button>
-      </div>
-      <div class="comment">
-        <span>Laisser un commentaire</span>
-        <input/>
-        <button>Envoyer</button>
       </div>
     </div> 
-    <h1>Posts récents</h1>
-    <form @submit.prevent="onSubmit" enctype="multipart/form-data" v-if="mode == 'newPost'" class="test">
-      <p>
-        <label for="title">title</label>
-        <input id="title" v-model="title" type="text" name="title">{{ title }}
-      </p>
-      <p>
-        <label for="description">description</label>
-        <textarea id="description" v-model="description" type="text" name="description"></textarea>
-      </p>
-      <p>
-        <label>Ajouter une image</label>
-        <input type="file" ref="picture" @change="onSelect"/>
-      </p>
-      <button @click.prevent="test()">Ajouter un post</button>
-    </form>
-    <button @click.prevent="createNewPost()">Ajouter un post</button>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
+
 export default {
     name: 'viewposts',
   data: function(){
     return{
-      mode:'',
-      title:'',
-      description:'',
-      picture:null
+      mode: '',
+     description: ''
     }
   },
+
 computed:{
-    ...mapState(['posts', 'user'])
+    ...mapState(['posts', 'auth'])
   },  
+
 methods: {
-  test: function(){
-    const formData = new FormData();
-    formData.append('title',this.title);
-    formData.append('description',this.description);
-    formData.append('picture',this.picture, this.picture.filename);
-    formData.append('userId',this.user.userId);
-    this.$store.dispatch('createPost', formData)
-    
+  displayComments: function(){
+    this.mode = 'comments'
   },
-  onSelect: function(){
-    this.picture = this.$refs.picture.files[0];
-    console.log(this.picture)
+  deletePost: function(post){
+    console.log(post)
+    this.$store.dispatch('deletePost', post)
   },
-  getPosts: function(){
-    this.$store.dispatch('getPosts')
-  },
-  createNewPost: function(){
-    this.mode = 'newPost'
+  newComment: function(){
+    const description =this.description
+    console.log(description)
+    this.$store.dispatch('createComment', {
+      description : this.description,
+      user: this.auth.userId,
+      post: this.posts.id
+    })
   }
 }
 }
 </script>
 
 <style scoped>
-.test{
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: rgba(247, 221, 221, 0.966);
-  width: 50%;
-  border: 2px solid;
-}
 
 .all_cards{
   display: flex;
   flex-direction: column-reverse;
 }
 
- .cards{
+.cards{
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-  margin-bottom: 30px;
+  margin-top: 30px;
 }
 
 .card{
@@ -117,11 +106,29 @@ methods: {
 }
 
 .topcard{
-	padding: 10px;
+	padding: 15px 15px 0 15px;
 	display: flex;
-	justify-content: space-between;
+	justify-content:flex-start;
 	border-radius: 0.5rem 0.5rem 0 0;
-	background-color: rgba(150, 126, 131, 0.774);
+}
+
+.logo{
+  width:40px;
+  height: 40px;
+   border-radius:50%;
+   box-shadow: darkorange;
+   object-fit:cover;
+   margin-right: 15px;
+   box-shadow: 1px 1px 6px rgb(53, 50, 50);
+}
+
+.name{
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.date{
+	margin-left: auto;
 }
 
 .bodycard{
@@ -130,11 +137,65 @@ methods: {
   padding: 20px;
 }
 
+.bodycard img{
+  width: 100%;
+}
+
 .bottomcard{
-	padding: 5px;
+	padding: 10px;
 	display: flex;
 	justify-content: space-between;
 	border-radius: 0 0 0.5rem 0;
 	background-color: rgba(196, 171, 171, 0.822);
+}
+
+.icon{
+  padding: 6px;
+  color: black;
+}
+
+.icon:hover{
+  color: rgb(255, 0, 0);
+  cursor: pointer;
+}
+
+.comment{
+  background-color: rgba(233, 220, 220, 0.418);
+}
+
+.title-comment{
+  font-size: 12px;
+}
+
+textarea{
+  width: 90%;
+  border-radius: 10px;
+  resize: none;
+  border: solid 1px rgb(194, 174, 174);
+}
+
+.comments-post{
+  margin-top: 15px;
+}
+
+.comment button{
+  box-shadow: 0px 10px 14px -7px #276873;
+	
+  background-color:#408c99;
+	border-radius:8px;
+	cursor:pointer;
+	color:#ffffff;
+	font-size:10px;
+	padding:5px 11px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #3d768a;
+}
+
+.comment button:hover {
+  background-color:#524a4a;
+}
+.comment button:active {
+	position:relative;
+	top:1px;
 }
 </style>
