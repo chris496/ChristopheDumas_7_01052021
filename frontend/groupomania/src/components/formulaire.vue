@@ -1,8 +1,8 @@
 <template>
   <div>
     <h1>Bienvenue sur votre réseau social groupomania</h1>
-    
   <form>
+    
     <h2 v-if="mode == 'login'">Connexion</h2>
     <h2 v-else>Inscription</h2>
     <p>
@@ -21,16 +21,21 @@
       <label for="password"></label>
       <input id="password" type="text" v-model="password" placeholder="Mot de passe">
     </p>
+
     <span v-if="status == 'echec'">Email et/ou mot de passe invalide</span>
+
     <button v-if="mode == 'login'" @click.prevent="loginUser()">Connexion</button>
     <button v-else @click.prevent="signupUser()">Validation</button>
+
   </form>
-  <span class="test" @click="switchDisplay()">s'inscrire</span>
+
+  <span v-if="mode == 'subscribe'" class="switchButton" @click="switchlogin()">se connecter</span>
+  <span v-if="mode == 'login'" class="switchButton" @click="switchSubscribe()">s'inscrire</span>
+
   </div>
 </template>
 
 <script>
-//import { mapState } from 'vuex'
 export default {
   name: 'formulaire',
   data: function(){
@@ -42,15 +47,21 @@ export default {
       password:''
     }
   },
+  
   computed:{
     status(){
       return this.$store.state.status
     }
   },
+
   methods: {
-	switchDisplay: function (){
+	switchSubscribe: function (){
 	this.mode = 'subscribe';
 	},
+  switchlogin: function (){
+	this.mode = 'login';
+	},
+
   loginUser: function(){
     this.$store.dispatch('login', {
       email: this.email,
@@ -58,6 +69,7 @@ export default {
     }).then(() => {this.$router.push('/about')})
     .catch(error => console.log(error))
   },
+
   signupUser: function(){
     this.$store.dispatch('signup', {
       firstname: this.firstname,
@@ -65,11 +77,10 @@ export default {
       email: this.email,
       password: this.password
     }).then(() => this.loginUser())
+    .catch(error => console.log(error))
   }
   }
 }
-  
-
 </script>
 
 <style scoped>
@@ -77,13 +88,13 @@ form{
 	width: 500px;
 	padding: 30px;
 	background: #ff8383;
-	margin: 50px auto;
+	margin: 50px auto 10px;
 	box-shadow: 0px 0px 15px rgba(36, 39, 207, 0.22);
-    border-radius: 1rem;
+  border-radius: 1rem;
 
 }  
 
-.test{
+.switchButton{
   color: red;
   cursor: pointer;
   text-decoration: underline;
@@ -117,11 +128,9 @@ input:focus{
 }
 
 button{
-
 	background-color: #ff0000;
-	
 	display: block;
-    margin: 40px auto 10px;
+  margin: 40px auto 10px;
 	cursor: pointer;
 	color: #FFFFFF;
 	font-size: 14px;

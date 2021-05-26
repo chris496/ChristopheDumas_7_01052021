@@ -1,5 +1,6 @@
 const mysql = require('mysql');
 
+// connexion à la base de données mysql
 const connection = mysql.createConnection({
     host: process.env.DB_HOST,
     database: process.env.DB_NAME,
@@ -14,13 +15,5 @@ connection.connect((err) => {
     }
     console.log('Connexion réussie')
 });
-
-/*
-connection.query('SELECT * FROM user', (err,result) => {
-    if(err) throw err;
-
-    console.log(result)
-})
-*/
 
 module.exports = connection;

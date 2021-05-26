@@ -1,32 +1,30 @@
 import { createStore} from 'vuex';
 import axios from 'axios';
-//let user = JSON.parse(localStorage.getItem('user'))
-//const userAuth = JSON.parse(localStorage.getItem('user'));
+
 const urlApi = axios.create({
   baseURL: 'http://localhost:3000/api/',
-  //headers: {
-    //Authorization: 'Bearer ' + user.token
-  //}
 })
 
-
 export default createStore({
-  state: {
-    status:'',
-    user: {
+state: {
+  status:'',
+    auth: {
       userId: '',
       token: ''
     },
     posts: '',
-    userInfos: ''
+    userInfos: '',
+    comment: ''
   },
+
   mutations: {
    testStatus: (state, status) => {
      state.status = status
    },
-   loginUser: (state, user) => {
-    urlApi.defaults.headers.common['Authorization'] = 'Bearer ' + user.token;
-     state.user = user
+
+   loginUser: (state, auth) => {
+    urlApi.defaults.headers.common['Authorization'] = 'Bearer ' + auth.token;
+     state.auth = auth
    },
    posts: (state, posts) => {
      state.posts = posts
@@ -34,11 +32,13 @@ export default createStore({
    userInfos: (state, userInfos) => {
      state.userInfos = userInfos
    },
-   putOneUser: (state,userInfos) => {
-    state.userInfos = userInfos
+   getComments: (state, comments) => {
+    state.comments = comments
    }
   },
   actions: {
+
+  // authentification user
     login: ({commit}, userData) => {
       return new Promise((resolve, reject) => {
         urlApi.post('auth/login', userData)
@@ -71,6 +71,7 @@ export default createStore({
       })
     },
 
+// gestion des posts
     getPosts: ({commit}) => {
       urlApi.get('post')
       .then(response => {
@@ -81,23 +82,27 @@ export default createStore({
     },
 
     createPost: ({commit}, Data) => {
-      
-      
-        urlApi.post('post/post', Data)
+        urlApi.post('post/', Data)
         .then(response => {
-          
           commit('posts', response.data)
-          
           console.log(response.data)
       })
         .catch(error => {
           console.log(error)
         })
-      
     },
 
+deletePost: ({commit}, post) => {
+  commit;
+  urlApi.delete(`post/${post.id}`)
+  .then(response => {
+    console.log(response.data)
+  })
+},
+
+//gestion des profils utilisateurs
     updateOneUser({commit, state}) {
-      const userId = this.state.user.userId
+      const userId = this.state.auth.userId
       urlApi.put(`user/${userId}`, state.userInfos[0])
       .then(response => {
         console.log(response.data)
@@ -107,20 +112,35 @@ export default createStore({
     },
 
     getOneUser({commit}) {
-        const userId = this.state.user.userId
+        const userId = this.state.auth.userId
         urlApi.get(`user/${userId}`)
         .then(response => {
           //console.log(response.json)
           commit('userInfos', response.data)
       })
-        .catch(error => {console.log(error)
-         
-          
-        
-      })
-      
-      
-    }
+        .catch(error => {console.log(error)  
+      })  
+    },
+
+// gestion des commentaires
+createComment: ({commit}, test) => {
+  commit;
+  console.log(test)
+  /*return new Promise((resolve, reject) => {
+  urlApi.post('comment/', test)
+  .then(response => {
+    resolve(response)
+    console.log(response.data)
+  })
+  .catch(error => {
+    reject(error)
+    
+  })
+})*/
+}
+
+
+
   },
   modules: {
   }

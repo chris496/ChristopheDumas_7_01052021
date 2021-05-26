@@ -1,9 +1,8 @@
-//const userModel = require('../models/user');
 const bcrypt = require('bcrypt');
 const connection = require('../config/db.config.js');
-//const sql = require("../config/db.config.js");
 const jwt = require('jsonwebtoken')
 
+// inscription de l'utilisateur
 exports.signup = (req, res) => {
   bcrypt.hash(req.body.password, 10)
     .then(hash =>{
@@ -22,9 +21,8 @@ exports.signup = (req, res) => {
     })
     .catch(error => res.status(500).json({error}));
 }
-      
- // "INSERT INTO `user` (`firstname`,`lastname`,`email`,`password`) VALUES ?"           
-
+ 
+// connexion de l'utilisateur
 exports.login = (req, res) => {
   connection.query('SELECT * FROM user WHERE email=?', req.body.email, function(err, result){
       if(result.length == 0) {
@@ -49,7 +47,6 @@ exports.login = (req, res) => {
   })
 }
        
-
 
 
 
