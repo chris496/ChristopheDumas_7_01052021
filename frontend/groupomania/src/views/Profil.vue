@@ -16,12 +16,11 @@ export default {
     
     console.log(this.$store.state)
     console.log(this.$store.state.userInfos)
-    //?????????????????????????????????????
+
     this.$store.dispatch('getOneUser')
     
-    
-    if(this.$store.state.user.userId == '' || this.$store.state.user.token == ''){
-      this.$router.push('/') 
+    if(this.$store.state.auth.userId == '' || this.$store.state.auth.token == ''){
+      return this.$router.push('/') 
     }
   },
   components: {

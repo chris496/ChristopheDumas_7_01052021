@@ -1,32 +1,46 @@
 <template>
   <div>
-    <div>
-    <div v-for="(userInfos,idx) in userInfos" v-bind:key="idx" class="body">
-        <div class="profil">
-          <div class="picture">
-            <img :src="userInfos.picture"/>
-            <span>Ajouter / Modifier photo de profil</span>
-			<input type="file" ref="file" @change="upload($event.target.files)"/>
-			<button @submit.prevent="onSubmit">Valider</button>
-          </div>
-          <div class="coords">
-            <div class="coord">Prénom : {{ userInfos.firstname }}</div>
-      <input v-if="mode == 'modification'" type="text" v-model="userInfos.firstname" placeholder="Nom">
-            <div class="coord">Nom : {{ userInfos.lastname }}</div>
-			<input v-if="mode == 'modification'" type="text" v-model="userInfos.lastname" placeholder="Nom">
-            <div class="coord">Email : {{ userInfos.email }}</div>
-			<input v-if="mode == 'modification'" type="text" v-model="userInfos.email" placeholder="Nom">
-            <button v-if="mode == 'display'" @click.prevent="switchDisplay()">Modifier coordonnées</button>
-			<button v-if="mode == 'modification'" @click.prevent="updateOneUser()">Valider</button>
-          </div>
-        </div>
-      </div>
-  </div>    
+	<div class="position-card">
+
+		<form @submit.prevent="onSubmit" enctype="multipart/form-data" class="profil">
+			<div class="picture">
+			<img src="../../public/icon.png"/>
+		<label v-if="mode == 'modification'">Ajouter / Modifier photo de profil</label>
+				<input v-if="mode == 'modification'" type="file" ref="image" @change="onSelect"/>
+			</div>
+
+			<div class="coords">
+
+			<div class="coord">Prénom : {{ userInfos.firstname }}</div>
+			<p>
+				<label for="firstname"></label>
+				<input v-if="mode == 'modification'" type="text" v-model="userInfos.firstname">
+			</p>
+
+			<div class="coord">Nom : {{ userInfos.lastname }}</div>
+			<p>
+			<label for="lastname"></label>
+			<input v-if="mode == 'modification'" type="text" v-model="userInfos.lastname">
+		</p>
+
+		<div class="coord">Email : {{ userInfos.email }}</div>
+		<p>
+			<label for="email"></label>
+			<input v-if="mode == 'modification'" type="email" v-model="userInfos.email">
+		</p>
+
+			<button v-if="mode == 'display'" @click.prevent="switchDisplay()">Modifier coordonnées</button>
+		<button v-if="mode == 'modification'" @click.prevent="updateOneUser()">Valider</button>
+			</div>
+		</form> 
+
+	</div> 
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
+
 export default {
     name: 'userProfil',
   data: function(){
@@ -34,28 +48,36 @@ export default {
 		mode:'display'
     }
   },
+
 computed:{
   ...mapState({
 	userInfos : 'userInfos'
   })
-  
   },  
+  
 methods: {
   switchDisplay: function (){
 	this.mode = 'modification';
 	},
   updateOneUser: function(){
-		this.$store.dispatch('updateOneUser')
+	console.log(this.store.userInfos)
+	//this.$store.dispatch('updateOneUser')
   },
-  upload: function(file){
-	console.log(file)
-  }
+  onSelect: function(){
+    this.image = this.$refs.image.files[0];
+    console.log(this.image)
+  },
 }
 }
 </script>
 
 <style scoped>
 .body{
+	display: flex;
+	justify-content: center;
+}
+
+.position-card{
 	display: flex;
 	justify-content: center;
 }
@@ -69,7 +91,7 @@ methods: {
 	display: flex;
 	justify-content: space-around;
 	align-items: center;
-	padding: 100px;
+	padding: 50px;
 }
 
 .coords{
@@ -86,12 +108,17 @@ methods: {
 .picture{
 	display: flex;
 	flex-direction: column;
+	align-items: center;
 	width: 200px;
 }
 
 .picture img{
-  border-radius: 30px;
-  width: 100px;
+   border: solid 2px rgb(255, 225, 225);
+   border-radius: 100px;
+   width: 150px;
+   height: 150px;
+   object-fit: cover;
+   margin-bottom: 20px;
 }
 
 .picture button{
