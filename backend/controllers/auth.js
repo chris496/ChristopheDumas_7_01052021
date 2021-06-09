@@ -2,6 +2,8 @@ const bcrypt = require('bcrypt');
 const connection = require('../config/db.config.js');
 const jwt = require('jsonwebtoken')
 
+const emailRegex = /(^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$)/;
+
 // inscription de l'utilisateur
 exports.signup = (req, res) => {
   bcrypt.hash(req.body.password, 10)
@@ -12,6 +14,20 @@ exports.signup = (req, res) => {
         "email":req.body.email,
         "password":hash
       }
+
+      //verification champs vide, longueur name, regex email
+      if (User.firstname == '' || User.lastname == '' || User.email == '' || User.password == ''){
+        return res.status(400).json({error:'erreur champs vide'});
+      }
+
+      if (User.firstname.length <= 2 || User.lastname.length <= 2){
+        return res.status(400).json({error:'erreur trop court'});
+      }
+
+      if (!emailRegex.test(User.email)){
+        return res.status(400).json({error:'regex : email invalid'});
+      }
+
       connection.query('INSERT INTO user SET ?', User, function(err, result){
         if(err) {
           return res.status(401).json({error:'erreur d\'insertion'});
@@ -30,7 +46,7 @@ exports.login = (req, res) => {
       }
       else bcrypt.compare(req.body.password, result[0].password)
       .then(valid => {
-        console.log(valid)
+        //console.log(valid)
         if(!valid){
           return res.status(401).json({error:'Mot de passe incorrect !'});
         }
@@ -38,7 +54,7 @@ exports.login = (req, res) => {
           userId: result[0].id,
           token: jwt.sign(
             {userId: result[0].id},
-            'JWT_TOKEN',
+            process.env.JWT_TOKEN,
             { expiresIn: '2h' }
             )
         })

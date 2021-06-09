@@ -66,7 +66,7 @@ export default {
     this.$store.dispatch('login', {
       email: this.email,
       password: this.password
-    }).then(() => {this.$router.push('/about')})
+    }).then(() => {this.$router.push('/posts')})
     .catch(error => console.log(error))
   },
 

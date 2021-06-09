@@ -13,12 +13,18 @@ export default createStore({
       token: "",
     },
     posts: [],
-    userInfos: "",
+    userInfos: [],
     comments: [],
+    allcomments: [],
+    likes: []
+  },
+
+  getters : {
+    isAdmin: state => state.userInfos.isadmin
   },
 
   mutations: {
-    testStatus: (state, status) => {
+    Status: (state, status) => {
       state.status = status;
     },
 
@@ -35,6 +41,12 @@ export default createStore({
     getComments: (state, comments) => {
       state.comments = comments;
     },
+    getAllComments: (state, allcomments) => {
+      state.allcomments = allcomments;
+    },
+    getLikes: (state, likes) => {
+      state.likes = likes;
+    },
     logout: (state) => {
       state.auth.userId = "";
       state.auth.token = "";
@@ -43,43 +55,51 @@ export default createStore({
   actions: {
     // authentification user
     login: ({ commit }, userData) => {
-      return new Promise((resolve, reject) => {
-        urlApi
-          .post("auth/login", userData)
-          .then((response) => {
-            resolve(response);
-            commit("testStatus", "");
+      return urlApi
+        .post("auth/login", userData)
+        .then((response) => {
+            commit("Status", "");
             commit("loginUser", response.data);
-
             console.log(response.data);
           })
-          .catch((error) => {
-            reject(error);
-            commit("testStatus", "echec");
+        .catch((error) => {
+            commit("Status", "echec");
+            console.log(error);
           });
-      });
     },
 
     signup: ({ commit }, userData) => {
-      commit;
-      return new Promise((resolve, reject) => {
-        urlApi
+        return urlApi
           .post("auth/signup", userData)
           .then((response) => {
-            resolve(response);
             console.log(response.json);
+            commit("Status", "");
+            //this.$router.push('/')
           })
           .catch((error) => {
-            reject(error);
+            commit("Status", "echec");
+            console.log(error);
           });
-      });
     },
 
     logout: function({ commit }) {
-      console.log("test_yo");
       commit("logout");
     },
+
     // gestion des posts
+    createPost: ({ commit }, Data) => {
+      commit;
+      return urlApi
+        .post("post/", Data)
+        .then((response) => {
+          console.log(response.data);
+          
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+
     getPosts: ({ commit }) => {
       urlApi
         .get("post")
@@ -90,31 +110,20 @@ export default createStore({
         .catch((error) => console.log(error));
     },
 
-    createPost: ({ commit }, Data) => {
-      commit;
-      urlApi
-        .post("post/", Data)
-        .then((response) => {
-          console.log(response.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-
     deletePost: ({ commit }, post) => {
       commit;
-      urlApi.delete(`post/${post.id}`).then((response) => {
+      return urlApi.delete(`post/${post.id}`)
+      .then((response) => {
         console.log(response.data);
       });
     },
 
     //gestion des profils utilisateurs
-    updateOneUser({ commit }, test) {
+    updateOneUser({ commit }, Data) {
       commit;
       const userId = this.state.auth.userId;
-      urlApi
-        .put(`user/${userId}`, test)
+      return urlApi
+        .put(`user/${userId}`, Data)
         .then((response) => {
           console.log(response.data);
         })
@@ -126,7 +135,6 @@ export default createStore({
       urlApi
         .get(`user/${userId}`)
         .then((response) => {
-          //console.log(response.json)
           commit("userInfos", response.data[0]);
         })
         .catch((error) => {
@@ -134,14 +142,21 @@ export default createStore({
         });
     },
 
-    // gestion des commentaires
-    createComment: ({ commit }, test) => {
+    deleteProfil ({ commit }) {
+      const userId = this.state.auth.userId;
       commit;
-      console.log(test);
+      urlApi.delete(`user/${userId}`)
+      .then((response) => {
+        console.log(response.data);
+      });
+    },
+
+    // gestion des commentaires
+    createComment: ({ commit }, Data) => {
+      commit;
       urlApi
-        .post("comment/", test)
+        .post("comment/", Data)
         .then((response) => {
-          //commit('posts', response.data)
           console.log(response.data);
         })
         .catch((error) => {
@@ -149,11 +164,18 @@ export default createStore({
         });
     },
 
-    getcomment: ({ commit }, teste) => {
-      commit;
-      urlApi.get(`comment/${teste.id}`).then((response) => {
+    getcomment: ({ commit }, Data) => {
+      urlApi.get(`comment/${Data.id}`).then((response) => {
         console.log(response.data);
         commit("getComments", response.data);
+      });
+    },
+
+    getallcomment: ({ commit }) => {
+      commit;
+      urlApi.get(`comment`).then((response) => {
+        console.log(response.data);
+        commit("getAllComments", response.data);
       });
     },
 
@@ -161,13 +183,25 @@ export default createStore({
       commit;
       urlApi.delete(`comment/${comment.id}`).then((response) => {
         console.log(response.data);
-        //commit('getComments', response.data)
       });
     },
 
     // gestion des likes
-    createlike: ({ commit }) => {
+    createlike: ({ commit }, Data) => {
       commit;
+      urlApi.post("like/", Data).then((response) => {
+        console.log(response.data)
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    },
+
+    getlike: ({ commit }) => {
+      return urlApi.get(`like/`).then((response) => {
+        console.log(response.data);
+        commit("getLikes", response.data);
+      });
     },
   },
   modules: {},

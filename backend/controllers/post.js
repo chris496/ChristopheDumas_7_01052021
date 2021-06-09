@@ -13,6 +13,11 @@ exports.createPost = (req, res) => {
         "user": req.body.userId,
         "added_date": new Date()
     }
+
+    if (Post.title == ''){
+        return res.status(400).json({error:'erreur champs title vide'});
+      }
+
     connection.query('INSERT INTO post SET ?', Post, function(err, result){
         if(err) {
             return res.status(401).json({err});
@@ -24,7 +29,7 @@ exports.createPost = (req, res) => {
 
 // liste tout les posts
 exports.getAllPost = (req, res) => {
-    connection.query('SELECT firstname, lastname, photo, post.* FROM user INNER JOIN post ON user.id = post.user', function(err, result){
+    connection.query('SELECT firstname, lastname, photo, post.* FROM user INNER JOIN post ON user.id = post.user ORDER BY added_date DESC', function(err, result){
         if(err) {
             return res.status(401).json({error:'erreur'});
           }

@@ -24,46 +24,61 @@
           @click.prevent="displayComments()"
         />
         <font-awesome-icon 
-          v-if="auth.userId == user"
+          v-if="auth.userId == user || userInfos.isadmin == 1"
           :icon="['fas', 'trash-alt']"
           class="icon"
           title="Supprimer le post"
           @click.prevent="deletePost()"
         />
         <font-awesome-icon
-          :icon="['far', 'thumbs-up']"
-          class="icon"
+          :icon="['fas', 'thumbs-up']"
+          class="icon icon_unlike"
           title="Liker le post"
           @click.prevent="like()"
+          v-if="liked == ''"
         />
+
+        <font-awesome-icon
+          :icon="['fa', 'thumbs-up']"
+          class="icon icon_like"
+          title="Liker le post"
+          @click.prevent="like()"
+          v-if="liked == '1'"
+        />
+        <!--<div v-for="(like, index) in likes.filter((like) => {
+            return like.user == auth.userId && like.post == id
+          })" :key="index">{{ like.id }}</div>-->
       </div>
 
       <!-- affichage des commentaires -->
-      <div v-if="mode == 'comments'" class="comment">
-        <span class="title-comment">Laisser un commentaire</span><br />
-        <textarea v-model="commentaire" />
+      <div v-if="mode == 'comments'" class="comments">
+        <span class="title-comment">Laisser un commentaire</span>
+        <textarea v-model="commentaire" placeholder="Votre commentaire..."/>
         <button @click.prevent="newComment()">Publier</button>
-
         <div
-          class="comments-post"
-          v-for="(comment, index) in comments"
+          class="comments_post"
+          v-for="(comment, index) in comments.filter((comment) => {
+            return comment.post == id
+          })"
           :key="index"
         >
-          <div class="dim"><img :src="comment.photo" /></div>
-          <div class="commentaires">
-            <p class="commentaires_text">{{ comment.description }}</p>
-          </div>
-          <span>{{ comment.user }}</span>
-          <span>{{ comment.added_date }}</span>
+        <div class="comment">
+          <div class="comment_avatar"><img :src="comment.photo" /></div>
+          <p class="comment_text">{{ comment.description }}</p>
           <font-awesome-icon
             :icon="['fas', 'trash-alt']"
-            class="icon"
+            class="icon fa-sm"
             title="Supprimer"
             @click.prevent="deleteComment(comment)"
-            v-if="auth.userId == user"
+            v-if="auth.userId == comment.user || userInfos.isadmin == 1"
           />
+        </div>  
+          <span class="comment_infos">{{ comment.firstname }} {{ comment.lastname }}</span>
+          <span class="comment_infos">{{ comment.added_date }}</span>
         </div>
       </div>
+
+      <!-- affichage des likes -->
     </div>
   
 </template>
@@ -77,11 +92,12 @@ export default {
     return {
       mode: "",
       commentaire: "",
+      liked: ""
     };
   },
 
   computed: {
-    ...mapState(["auth", "comments", "userInfos"]),
+    ...mapState(["auth", "comments", "likes", "userInfos"]),
   },
 
   props: [
@@ -96,11 +112,14 @@ export default {
     "photo",
   ],
 
+  
+
   methods: {
     deleteComment: function(comment) {
-      this.comments.splice(this.comments.indexOf(comment), 1);
-      //this.comments.splice(comment, 1);
-      console.log(comment);
+      console.log(comment)
+      //console.log(this.comments.findIndex(el => el.id === comment.id))
+      //const test = this.comments.findIndex(el => el.id === comment.id)
+      //this.comments.splice(test, 1);
       //this.$store.dispatch("deleteComment", comment);
     },
     displayComments: function() {
@@ -110,11 +129,17 @@ export default {
         id: this.id,
       });
     },
+    //displayLikes: function(){
+      //console.log(this.likes)
+      //this.$store.dispatch("getlike")
+    //},
     deletePost: function() {
       console.log(this.id);
       //this.posts.splice(this.posts.indexOf(this.id), 1);
       this.$store.dispatch("deletePost", {
         id: this.id,
+      }).then(() => {
+        this.$store.dispatch("getPosts")
       });
     },
     newComment: function() {
@@ -122,25 +147,50 @@ export default {
         description: this.commentaire,
         user: this.auth.userId,
         post: this.id,
+      }).then(() => {
+        this.$store.dispatch("getcomment", {
+        id: this.id,
       });
+      })
       this.commentaire = "";
     },
 
-    like: function() {},
+    like: function() {
+      if(this.liked == 0){
+       this.$store.dispatch("createlike", {
+        like: 0,
+        user: this.auth.userId,
+        post: this.id,
+      }).then(() => {
+        this.$store.dispatch("getlike")
+      })
+      this.liked = "1";
+      }
+      else if(this.liked == 1){
+        console.log("test")
+        this.$store.dispatch("createlike", {
+        like: 1,
+        user: this.auth.userId,
+        post: this.id,
+      }).then(() => {
+        this.$store.dispatch("getlike")
+      })
+        this.liked = "";
+      }
+      
+    },
   },
 };
 </script>
 
 <style scoped>
-.dim img {
-  width: 40px;
-}
+
 
 .card {
   width: 40%;
-  background-color: rgba(233, 220, 220, 0.418);
-  border: 1px solid rgb(231, 198, 198);
-  border-radius: 0.5rem 0.5rem 0.5rem 0;
+  background-color: rgba(255, 255, 255, 0.418);
+  /*border: 1px solid rgb(231, 198, 198);*/
+ /* border-radius: 0.5rem 0.5rem 0.5rem 0;*/
   box-shadow: 0px 5px 15px rgba(36, 39, 207, 0.22);
   margin-top: 30px;
 }
@@ -180,6 +230,8 @@ export default {
 
 .bodycard_description{
   width: 100%;
+  margin-bottom: 5px;
+  word-wrap: break-word;
 }
 
 .bodycard img {
@@ -190,8 +242,8 @@ export default {
   padding: 10px;
   display: flex;
   justify-content: space-between;
-  border-radius: 0 0 0.5rem 0;
-  background-color: rgba(196, 171, 171, 0.822);
+  /*border-radius: 0 0 0.5rem 0;*/
+  /*background-color: rgba(255, 213, 203, 0);*/
 }
 
 .icon {
@@ -204,12 +256,18 @@ export default {
   cursor: pointer;
 }
 
-.comment {
+.icon_like{
+  color: blue;
+}
+
+.comments {
   background-color: rgba(233, 220, 220, 0.418);
+  padding: 10px 0px;
 }
 
 .title-comment {
   font-size: 12px;
+  margin-bottom: 5px;
 }
 
 textarea {
@@ -218,12 +276,28 @@ textarea {
   resize: none;
   border: solid 1px rgb(194, 174, 174);
 }
+.comment{
+  display: flex;
+  width: 90%;
+  margin: auto;
+}
 
-.comments-post {
+.comments_post {
   margin-top: 15px;
 }
 
-.comment button {
+.comment_avatar img {
+  margin-right: 10px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+
+.comment_infos{
+  font-size: 10px;
+  margin-right: 5px;
+}
+.comments button {
   box-shadow: 0px 10px 14px -7px #276873;
 
   background-color: #408c99;
@@ -236,23 +310,45 @@ textarea {
   text-shadow: 0px 1px 0px #3d768a;
 }
 
-.comment button:hover {
+.comments button:hover {
   background-color: #524a4a;
 }
-.comment button:active {
+.comments button:active {
   position: relative;
   top: 1px;
 }
 
-.commentaires {
+/*.commentaires {
   width: 90%;
   border: 1px solid;
-  border-radius: 25px;
+  border-radius: 10px;
+  padding: 1px;
   margin: auto;
   background-color: rgba(250, 191, 191, 0.63);
+}*/
+
+.comment_text {
+  text-align: left;
+   width: 90%;
+  border: 1px solid;
+  border-radius: 10px;
+  padding: 5px;
+  margin: auto;
+  background-color: rgba(255, 255, 255, 0.63);
+  word-wrap: break-word;
 }
 
-.commentaires_text {
-  text-align: left;
+
+
+@media (max-width: 768px) {
+            .card {
+  width: 90%;
 }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+            .card {
+  width: 70%;
+}
+    }
 </style>

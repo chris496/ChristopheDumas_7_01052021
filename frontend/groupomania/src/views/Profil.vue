@@ -1,40 +1,37 @@
 <template>
   <div>
-    <navigation/>
+    <navigation />
     <h1>Votre profil</h1>
-    <userprofil/>
+    <userprofil />
   </div>
 </template>
 
 <script>
-  import navigation from '../components/navigation.vue';
-  import userprofil from '../components/userProfil.vue';
+import navigation from "../components/navigation.vue";
+import userprofil from "../components/userProfil.vue";
 
 export default {
-  name: 'pageProfil',
-  mounted(){
+  name: "Profil",
+  mounted() {
+    this.$store.dispatch("getOneUser");
     
-    console.log(this.$store.state)
-    console.log(this.$store.state.userInfos)
-
-    this.$store.dispatch('getOneUser')
-    
-    if(this.$store.state.auth.userId == '' || this.$store.state.auth.token == ''){
-      return this.$router.push('/') 
+    //déconnexion automatique si user ou token vide
+    if (
+      this.$store.state.auth.userId == "" ||
+      this.$store.state.auth.token == ""
+    ) {
+      return this.$router.push("/");
     }
   },
   components: {
     navigation,
-    userprofil
+    userprofil,
   },
-
-}
+};
 </script>
 
 <style>
-body{
-	margin: 0;
+body {
+  margin: 0;
 }
-
-
 </style>

@@ -1,8 +1,9 @@
 <template>
   <div class="posts">
     <navigation />
-
+  <button @click="moderation" v-if="userInfos.isadmin == 1">Moderation des commentaires</button>
     <createpost />
+    <!--boucle sur tableau posts-->
     <div class="all_cards">
     <post 
       v-for="(item, index) in posts"
@@ -31,7 +32,10 @@ export default {
   name: "Posts",
   mounted() {
     this.$store.dispatch("getPosts");
+    this.$store.dispatch("getlike");  
+    this.$store.dispatch("getOneUser");
 
+  //déconnexion automatique si user ou token vide
     if (
       this.$store.state.auth.userId == "" ||
       this.$store.state.auth.token == ""
@@ -39,15 +43,22 @@ export default {
       this.$router.push("/");
     }
   },
+  
   components: {
-    //HelloWorld,
     post,
     navigation,
     createpost,
   },
+
   computed: {
-    ...mapState(["posts", "auth"]),
+    ...mapState(["posts", "auth", "likes", "userInfos"]),
   },
+
+  methods: {
+    moderation: function() {
+      this.$router.push("/moderation");
+    },
+  }
 };
 </script>
 
@@ -58,7 +69,7 @@ body {
 
 .all_cards {
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 }

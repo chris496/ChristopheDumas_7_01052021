@@ -1,7 +1,7 @@
 <template>
   <div>
     
-  <form @submit="checkForm">
+  <form @submit.prevent="submitForm">
     
     <h2>Inscription</h2>
 
@@ -59,8 +59,9 @@ export default {
   
 
   methods: {
-	checkForm: function() {
-      /*this.errors = [];
+	submitForm: function() {
+    
+      this.errors = [];
       var regex = /(^[A-z- ]+$)/
       if (!this.lastname || !regex.test(this.lastname) || this.lastname.length > 50)
       {
@@ -77,31 +78,17 @@ export default {
       }
       if (!this.password || !regex.test(this.password) || this.password.length > 50)
       {
-        this.errors.push("Votre password ne peut être vide");
+        this.errors.push("Votre password doit être renforcé (minimum de 8 caractères dont 1 majuscule, sans espaces)");
       }
       if (!this.errors.length)
       {
-        return true;
+        this.$store.dispatch('signup', {
+          firstname: this.firstname,
+          lastname: this.lastname,
+          email: this.email,
+          password: this.password})
       }
-      e.preventDefault();*/
-
-      this.$store.dispatch('signup', {
-      firstname: this.firstname,
-      lastname: this.lastname,
-      email: this.email,
-      password: this.password})
-
   },
-test: function(){
-
-}
-
-
-    
-  
-
-  
-
   }
 }
 </script>

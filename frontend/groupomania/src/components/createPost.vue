@@ -9,8 +9,8 @@
     <font-awesome-icon :icon="['fas', 'times']" class="icon" @click.prevent="closeNewPost()"/>
 
       <p>
-        <label for="title">Titre : </label>
-        <input id="title" v-model="title" type="text" name="title" />{{ title }}
+        <label for="title">Titre du post : </label>
+        <input id="title" v-model="title" type="text" name="title" />
       </p>
 
       <p>
@@ -35,7 +35,7 @@
     </form>
 
     <button class="addpost" @click.prevent="createNewPost()">
-      Ajouter un post
+      Créer un post
     </button>
   </div>
 </template>
@@ -63,7 +63,10 @@ export default {
       formData.append("description", this.description);
       formData.append("image", this.image);
       formData.append("userId", this.auth.userId);
-      this.$store.dispatch("createPost", formData);
+      this.$store.dispatch("createPost", formData).then(() => {
+        this.$store.dispatch("getPosts")
+      })
+      
     },
 
     onSelect: function() {
@@ -87,10 +90,10 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: rgba(224, 223, 223, 0.966);
-  border-radius: 20px;
+  background-color: rgba(255, 255, 255, 0.966);
+  border: 2px solid rgba(255, 172, 172, 0.61);
   width: 50%;
-  padding: 40px;
+  padding: 60px 0px 40px 0px;
 }
 
 .icon{
@@ -104,8 +107,9 @@ export default {
 .addpost {
   margin-top: 4px;
   box-shadow: 0px 3px 3px 0px #bdbdbd;
-  background-color: #fcb5b5;
+  background-color: #fff9f9;
   border-radius: 3px;
+  border: none;
   cursor: pointer;
   color: #4b4a4a;
   font-size: 15px;
@@ -114,7 +118,7 @@ export default {
 }
 
 .addpost:hover {
-  background-color: #f8cece;
+  background-color: #f0efef;
 }
 
 .addpost:active {
@@ -127,14 +131,15 @@ textarea {
 }
 
 .sendpost {
-  box-shadow: 0px 3px 3px 0px #bdbdbd;
-  background-color: #696969;
+  box-shadow: 0px 3px 3px #bdbdbd;
+  background-color: #fff9f9;
   border-radius: 10px;
+  border: none;
   cursor: pointer;
-  color: #ffffff;
   font-size: 15px;
   padding: 3px 70px;
   text-decoration: none;
+  margin-top: 30px;
 }
 
 .sendpost:hover {
@@ -145,4 +150,20 @@ textarea {
   position: relative;
   top: 1px;
 }
+
+@media (max-width: 768px) {
+            .formulaire {
+              position: absolute;
+              top: 30%;
+  width: 80%;
+}
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+            .formulaire {
+              position: absolute;
+              top: 40%;
+  width: 80%;
+}
+    }
 </style>
