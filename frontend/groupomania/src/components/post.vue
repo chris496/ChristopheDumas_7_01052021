@@ -3,7 +3,8 @@
     <!-- affichage des posts -->
     <div class="card">
       <div class="topcard">
-        <div><img class="logo" :src="photo" /></div>
+        <img class="logo" v-if="photo" :src="photo"/>
+        <img class="logo" v-if="photo == null" src="../../public/images/icon.png"/>
         <div class="infos">
           <div class="name">{{ firstname }} {{ lastname }}</div>
           <div class="title">{{ title }}</div>
@@ -17,12 +18,16 @@
       </div>
 
       <div class="bottomcard">
+        <div class="bottoms">
         <font-awesome-icon
           :icon="['far', 'comment-dots']"
           class="icon"
           title="Afficher/créer commentaires"
           @click.prevent="displayComments()"
         />
+        <span class="cpt">{{ compteurComments }}</span>
+        </div>
+
         <font-awesome-icon 
           v-if="auth.userId == user || userInfos.isadmin == 1"
           :icon="['fas', 'trash-alt']"
@@ -30,12 +35,15 @@
           title="Supprimer le post"
           @click.prevent="deletePost()"
         />
-        <font-awesome-icon
+        
+        
+        <div class="bottoms">
+          <font-awesome-icon
           :icon="['fas', 'thumbs-up']"
           class="icon icon_unlike"
           title="Liker le post"
           @click.prevent="like()"
-          v-if="liked == ''"
+          v-if="arrayLike.length < 1"
         />
 
         <font-awesome-icon
@@ -43,11 +51,10 @@
           class="icon icon_like"
           title="Liker le post"
           @click.prevent="like()"
-          v-if="liked == '1'"
+          v-if="arrayLike.length > 0"
         />
-        <!--<div v-for="(like, index) in likes.filter((like) => {
-            return like.user == auth.userId && like.post == id
-          })" :key="index">{{ like.id }}</div>-->
+        <span class="cpt">{{ compteurLikes }}</span>
+        </div>
       </div>
 
       <!-- affichage des commentaires -->
@@ -91,13 +98,28 @@ export default {
   data: function() {
     return {
       mode: "",
-      commentaire: "",
-      liked: ""
+      commentaire: ""
     };
   },
 
   computed: {
-    ...mapState(["auth", "comments", "likes", "userInfos"]),
+    ...mapState(["auth", "comments", "allcomments","likes", "userInfos"]),
+
+    arrayLike: function(){
+      const like = this.likes.filter(el => el.user == this.userInfos.id && el.post == this.id)
+      return like
+    },
+
+    compteurLikes: function(){
+      const like = this.likes.filter(el => el.post == this.id)
+      return like.length
+    },
+
+    compteurComments: function(){
+      const comment = this.allcomments.filter(el => el.post == this.id)
+      return comment.length
+    }
+  
   },
 
   props: [
@@ -123,7 +145,7 @@ export default {
       //this.$store.dispatch("deleteComment", comment);
     },
     displayComments: function() {
-      console.log(this.id);
+      //console.log(this.id);
       this.mode = "comments";
       this.$store.dispatch("getcomment", {
         id: this.id,
@@ -134,7 +156,7 @@ export default {
       //this.$store.dispatch("getlike")
     //},
     deletePost: function() {
-      console.log(this.id);
+      //console.log(this.id);
       //this.posts.splice(this.posts.indexOf(this.id), 1);
       this.$store.dispatch("deletePost", {
         id: this.id,
@@ -148,6 +170,7 @@ export default {
         user: this.auth.userId,
         post: this.id,
       }).then(() => {
+        this.$store.dispatch("getallcomment")
         this.$store.dispatch("getcomment", {
         id: this.id,
       });
@@ -156,7 +179,7 @@ export default {
     },
 
     like: function() {
-      if(this.liked == 0){
+      if(this.likes.filter(el => el.user == this.userInfos.id && el.post == this.id) == 0){
        this.$store.dispatch("createlike", {
         like: 0,
         user: this.auth.userId,
@@ -164,10 +187,9 @@ export default {
       }).then(() => {
         this.$store.dispatch("getlike")
       })
-      this.liked = "1";
       }
-      else if(this.liked == 1){
-        console.log("test")
+      else if(this.likes.filter(el => el.user == this.userInfos.id && el.post == this.id)){
+        //console.log("test")
         this.$store.dispatch("createlike", {
         like: 1,
         user: this.auth.userId,
@@ -175,7 +197,6 @@ export default {
       }).then(() => {
         this.$store.dispatch("getlike")
       })
-        this.liked = "";
       }
       
     },
@@ -256,8 +277,22 @@ export default {
   cursor: pointer;
 }
 
+.bottoms{
+  display: flex;
+}
+
 .icon_like{
   color: blue;
+}
+
+.icon_like:hover{
+  color: blue;
+}
+
+.cpt{
+  display: block;
+  font-weight: 700;
+  padding: 6px;
 }
 
 .comments {

@@ -32,6 +32,7 @@ export default {
   name: "Posts",
   mounted() {
     this.$store.dispatch("getPosts");
+    this.$store.dispatch("getallcomment");
     this.$store.dispatch("getlike");  
     this.$store.dispatch("getOneUser");
 
@@ -51,7 +52,7 @@ export default {
   },
 
   computed: {
-    ...mapState(["posts", "auth", "likes", "userInfos"]),
+    ...mapState(["posts", "auth","allcomments", "likes", "userInfos"]),
   },
 
   methods: {

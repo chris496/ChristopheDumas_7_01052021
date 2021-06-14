@@ -1,35 +1,33 @@
 const connection = require("../config/db.config.js");
 
 exports.like = (req, res) => {
-    console.log(req.body)
+    //console.log(req.body)
     const like = {
         "user": req.body.user,
         "post": req.body.post
     }
-    if(req.body.like == 0){
-        connection.query('INSERT INTO `like` SET ?', like, function(err, result){
-            if(err) {
-                return res.status(401).json({error:'erreur'});
-              }
-              else res.send(result)
-        })  
-            }
-    if(req.body.like == 1){
-        connection.query('DELETE FROM `like` WHERE user=?, post=?', like, function(err, result){
-            console.log(err)
-        console.log(result)
-                    if(err) {
-                        return res.status(401).json({error:'impossible de supprimer'});
-                      }
-                      else res.send(result)
-                })
-              }
+        if(req.body.like == 0){
+            connection.query('INSERT INTO `like` SET ?', like, function(err, result){
+                if(err) {
+                    return res.status(401).json({error:'erreur'});
+                    }
+                    else res.send(result)
+                })  
+                }else if(req.body.like == 1){
+                    connection.query('DELETE FROM `like` WHERE user=? AND post=?', [req.body.user, req.body.post], function(err, result){
+                        if(err) {
+                            return res.status(401).json({error:'impossible de supprimer'});
+                        }
+                         else res.send(result)
+                        })
+                    }
+                
             
     }
     
     
 exports.deletelike = (req, res) => {
-    console.log(req.params.id)
+    //console.log(req.params.id)
     connection.query('DELETE FROM `like` WHERE id=?', [req.params.id], function(err, result){
        if(err) {
             return res.status(401).json({error:'erreur'});
