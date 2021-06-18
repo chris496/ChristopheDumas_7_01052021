@@ -1,19 +1,42 @@
 <template>
-<div>
-  <div v-for="(allcomment, index) in allcomments" :key="index">
-     <p class="commentaires_text">{{ allcomment.description }}</p>
-          
-          <span>{{ allcomment.user }}</span>
-          <span>{{ allcomment.added_date }}</span>
-          <font-awesome-icon
-            :icon="['fas', 'trash-alt']"
-            class="icon"
-            title="Supprimer"
-            @click.prevent="deleteComment(allcomment)"
-            v-if="userInfos.isadmin == 1"
+  <div>
+    <!-- affichage de tous les commentaires -->
+    <div
+      v-for="(allcomment, index) in allcomments"
+      :key="index"
+      class="comments_post"
+    >
+      <div class="comment">
+        <div class="comment_avatar">
+          <img
+            class="logo"
+            v-if="allcomment.photo"
+            :src="allcomment.photo"
+            alt="photo"
           />
+          <img
+            class="logo"
+            v-if="allcomment.photo == null"
+            src="../../public/images/icon.png"
+            alt="logo"
+          />
+        </div>
+        <p class="commentaires_text">{{ allcomment.description }}</p>
+        <!--<font-awesome-icon
+          :icon="['fas', 'trash-alt']"
+          class="icon"
+          title="Supprimer"
+          @click.prevent="deleteComment(allcomment)"
+          v-if="userInfos.isadmin == 1"
+        />-->
+        <button title="Supprimer" @click.prevent="deleteComment(allcomment)" v-if="userInfos.isadmin == 1"></button>
+      </div>
+      <span class="comment_infos"
+        >{{ allcomment.firstname }} {{ allcomment.lastname }}</span
+      >
+      <span class="comment_infos">{{ formatDate(allcomment.added_date) }}</span>
+    </div>
   </div>
-</div>
 </template>
 
 <script>
@@ -21,36 +44,127 @@ import { mapState } from "vuex";
 export default {
   name: "allComments",
   data: function() {
-    return {
-      
-    };
+    return {};
   },
 
   computed: {
     ...mapState(["auth", "allcomments", "userInfos"]),
   },
 
-methods: {
-deleteComment: function(comment) {
-      console.log(comment)
-      //console.log(this.comments.findIndex(el => el.id === comment.id))
-      //const test = this.comments.findIndex(el => el.id === comment.id)
-      //this.comments.splice(test, 1);
-      //this.$store.dispatch("deleteComment", comment);
+  methods: {
+    formatDate(dateString) {
+      const date = new Date(dateString);
+      return new Intl.DateTimeFormat("default", {
+        dateStyle: "medium",
+        timeStyle: "short",
+      }).format(date);
     },
-},
+
+    deleteComment: function(allcomment) {
+      //console.log(allcomment);
+      //console.log(this.allcomments.findIndex((el) => el.id === allcomment.id));
+      const test = this.allcomments.findIndex(el => el.id === allcomment.id)
+      this.allcomments.splice(test, 1);
+      this.$store.dispatch("deleteComment", allcomment);
+    },
+  },
 };
 </script>
 
 <style scoped>
+button{
+  border: none;
+  margin-left: 5px;
+  width: 15px;
+  height: 15px;
+border-radius: 50%;
+background-color: rgb(250, 87, 87);
+cursor: pointer;
+box-shadow: 0px 1px 0px 0px #313131;
+}
+
+button:hover {
+  background-color: #ff0000;
+}
+
+button:active {
+  position: relative;
+  top: 1px;
+}
+
 .commentaires_text {
   text-align: left;
-   width: 50%;
+  width: 50%;
   border: 1px solid;
   border-radius: 10px;
   padding: 5px;
-  margin: 10px auto;
+  margin: 10px 0;
   background-color: rgba(255, 255, 255, 0.63);
   word-wrap: break-word;
 }
+
+.icon {
+  cursor: pointer;
+  margin-left: 5px;
+}
+
+.icon:hover {
+  color: red;
+}
+
+.comment {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 90%;
+  margin: auto;
+}
+
+.comment_avatar img {
+  margin-right: 10px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+
+.comment_infos {
+  font-size: 15px;
+  margin-right: 5px;
+}
+
+@media (max-width: 768px) {
+  .card {
+    width: 90%;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .card {
+    width: 70%;
+  }
+}
 </style>
+
+<!--
+        <div
+          class="comments_post"
+          v-for="(comment, index) in comments.filter((comment) => {
+            return comment.post == id
+          })"
+          :key="index"
+        >
+        <div class="comment">
+          <div class="comment_avatar"><img :src="comment.photo" /></div>
+          <p class="comment_text">{{ comment.description }}</p>
+          <font-awesome-icon
+            :icon="['fas', 'trash-alt']"
+            class="icon fa-sm"
+            title="Supprimer"
+            @click.prevent="deleteComment(comment)"
+            v-if="auth.userId == comment.user || userInfos.isadmin == 1"
+          />
+        </div>  
+          <span class="comment_infos">{{ comment.firstname }} {{ comment.lastname }}</span>
+          <span class="comment_infos">{{ comment.added_date }}</span>
+        </div>
+      -->
