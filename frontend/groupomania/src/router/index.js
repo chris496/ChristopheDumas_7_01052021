@@ -28,28 +28,9 @@ const routes = [
   },
 ];
 
-
-
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
 });
-
-/*const store = this.$store.state.userInfos.isadmin
-
-router.beforeEach((to, from, next) => {
-  if(to.matched.some(record => record.meta.isadmin)) {
-      if (store == 1) {
-
-          next();
-          return;
-      }
-
-      next('/login');
-
-  } else {
-      next();
-  }
-})*/
 
 export default router;

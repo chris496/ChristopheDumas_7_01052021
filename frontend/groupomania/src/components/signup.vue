@@ -1,45 +1,33 @@
 <template>
   <div>
-    
-  <form @submit.prevent="submitForm">
-    
-    <h2>Inscription</h2>
+    <form @submit.prevent="submitForm">
+      <h2>Inscription</h2>
+      <p>
+        <label for="lastName"></label>
+        <input id="lastName" type="text" v-model="lastname" placeholder="Nom">
+      </p>
+      <p>
+        <label for="firstName"></label>
+        <input id="firstName" type="text" v-model="firstname" placeholder="Prénom">
+      </p>
+      <p>
+        <label for="email"></label>
+        <input id="email" type="text" v-model="email" placeholder="Email">
+      </p>
+      <p>
+        <label for="password"></label>
+        <input id="password" type="text" v-model="password" placeholder="Mot de passe">
+      </p>
 
-    
-    <p>
-      <label for="lastName"></label>
-      <input id="lastName" type="text" v-model="lastname" placeholder="Nom">
-    </p>
-
-    <p>
-      <label for="firstName"></label>
-      <input id="firstName" type="text" v-model="firstname" placeholder="Prénom">
-    </p>
-    
-    <p>
-      <label for="email"></label>
-      <input id="email" type="text" v-model="email" placeholder="Email">
-    </p>
-    <p>
-      <label for="password"></label>
-      <input id="password" type="text" v-model="password" placeholder="Mot de passe">
-    </p>
-
-     
       <button class="button" type="submit">Valider</button>
-    
 
-    <p v-if="errors.length">
-      <b>Les informations rentrées ne sont pas valides :</b>
-      <ul>
-        <li v-for="error in errors" :key="error">{{ error }}</li>
-      </ul>
-    </p>
-   
-
-  </form>
-
-
+      <p v-if="errors.length">
+        <b>Les informations rentrées ne sont pas valides :</b>
+        <ul>
+          <li v-for="error in errors" :key="error">{{ error }}</li>
+        </ul>
+      </p>
+    </form>
   </div>
 </template>
 
@@ -56,13 +44,13 @@ export default {
     }
   },
   
-  
-
   methods: {
-	submitForm: function() {
-    
+	submitForm () {
       this.errors = [];
-      var regex = /(^[A-z- ]+$)/
+
+      const regex = /(^[A-z- ]+$)/;
+      const regexmail = /(^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$)/;
+
       if (!this.lastname || !regex.test(this.lastname) || this.lastname.length > 50)
       {
         this.errors.push("Votre nom ne peut être vide et doit respecter un format classique");
@@ -71,7 +59,6 @@ export default {
       {
         this.errors.push("Votre prénom ne peut être vide et doit respecter un format classique");
       }
-      var regexmail = /(^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$)/;
       if (!this.email || !regexmail.test(this.email))
       {
         this.errors.push("Votre email ne peut être vide et doit être une adresse mail valide");
@@ -87,6 +74,7 @@ export default {
           lastname: this.lastname,
           email: this.email,
           password: this.password})
+          this.$emit('switchlogin')
       }
   },
   }
@@ -100,8 +88,6 @@ form{
 	background: #ffffff;
 	margin: 50px auto 10px;
 	box-shadow: 0px 0px 15px rgba(36, 39, 207, 0.22);
-  /*border-radius: 1rem;*/
-
 }  
 
 .switchButton{
@@ -117,11 +103,9 @@ h2{
 	font-weight: 100;
 	padding: 20px;
 	margin: -30px -30px 30px -30px;
-    /*border-radius: 1rem 1rem 0 0 ;*/
 }
 
-input
-{
+input{
 	box-sizing: border-box;
 	display: block;
 	width: 100%;
@@ -152,14 +136,14 @@ button:hover {
 }
 
 @media (max-width: 768px) {
-            form {
+form {
   width: 80%;
-    }
+  }
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
-            form {
+form {
   width: 50%;
-    }
-    }
+  }
+}
 </style>

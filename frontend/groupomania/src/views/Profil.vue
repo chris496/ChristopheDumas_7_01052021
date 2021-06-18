@@ -9,23 +9,29 @@
 <script>
 import navigation from "../components/navigation.vue";
 import userprofil from "../components/userProfil.vue";
+import { mapState } from "vuex";
 
 export default {
   name: "Profil",
   mounted() {
-    this.$store.dispatch("getOneUser");
+    console.log(this.$store.state.status)
+    //this.$store.dispatch("getOneUser");
     
     //déconnexion automatique si user ou token vide
     if (
       this.$store.state.auth.userId == "" ||
-      this.$store.state.auth.token == ""
+      this.$store.state.auth.token == "" || this.$store.state.status == "echec"
     ) {
-      return this.$router.push("/");
+      this.$router.push("/");
     }
   },
   components: {
     navigation,
     userprofil,
+  },
+
+  computed: {
+    ...mapState(["auth"]),
   },
 };
 </script>

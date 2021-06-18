@@ -1,13 +1,19 @@
 <template>
   <div>
     <div class="position-card">
+      <!-- formulaire modification user -->
       <form
         @submit.prevent="onSubmit"
         enctype="multipart/form-data"
         class="profil"
       >
         <div class="picture">
-          <img :src="userInfos.photo"/>
+          <img v-if="userInfos.photo" :src="userInfos.photo" alt="photo" />
+          <img
+            v-if="userInfos.photo == null"
+            src="../../public/images/icon.png"
+            alt="logo"
+          />
           <label v-if="mode == 'modification'"
             >Ajouter / Modifier votre photo de profil</label
           >
@@ -43,28 +49,36 @@
           <div class="coord">Email : {{ userInfos.email }}</div>
           <p>
             <label for="email"></label>
-            <input v-if="mode == 'modification'" type="email" v-model="userInfos.email" />
+            <input
+              v-if="mode == 'modification'"
+              type="email"
+              v-model="userInfos.email"
+            />
+          </p>
+
+          <p v-if="errors.length">
+            <ul>
+              <li class="error" v-for="error in errors" :key="error">{{ error }}</li>
+            </ul>
           </p>
 
           <button v-if="mode == 'display'" @click.prevent="switchDisplay()">
-            Modifier vos coordonnées
+            Modifier votre profil
           </button>
           <div class="modif_profil" v-if="mode == 'modification'">
-            <button
-              @click.prevent="cancelUpdateOneUser()"
-            >
+            <button @click.prevent="cancelUpdateOneUser()">
               Annuler
             </button>
-            <button
-              @click.prevent="updateOneUser()"
-            >
+            <button @click.prevent="updateOneUser()">
               Valider
             </button>
           </div>
         </div>
       </form>
     </div>
-    <button class="deleteProfil" @click.prevent="deleteOneUser()">Supprimer votre compte</button>
+    <button class="deleteProfil" @click.prevent="deleteOneUser()">
+      Supprimer votre compte
+    </button>
   </div>
 </template>
 
@@ -75,11 +89,8 @@ export default {
   name: "userProfil",
   data: function() {
     return {
+      errors: [],
       mode: "display",
-      firstname: "",
-      lastname: "",
-      email: "",
-      photo: null,
     };
   },
 
@@ -90,29 +101,64 @@ export default {
   },
 
   methods: {
-    deleteOneUser: function() {
-      this.$store.dispatch("deleteProfil");
-      this.$router.push("/");
-    },
-    switchDisplay: function() {
+    switchDisplay () {
       this.mode = "modification";
     },
-    cancelUpdateOneUser: function() {
+    cancelUpdateOneUser () {
+      this.errors = [];
       this.mode = "display";
+      this.$store.dispatch("getOneUser");
     },
-    updateOneUser: function() {
-      const formData = new FormData();
-      formData.append("firstname", this.firstname);
-      formData.append("lastname", this.lastname);
-      formData.append("image", this.image);
-      formData.append("email", this.email);
-      this.$store.dispatch("updateOneUser", formData).then(() => {
-        this.$store.dispatch("getOneUser");
-      })
+    updateOneUser () {
+      this.errors = [];
+
+      const regex = /(^[A-z- ]+$)/;
+      const regexmail = /(^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$)/;
+
+      if (
+        !this.userInfos.lastname ||
+        !regex.test(this.userInfos.lastname) ||
+        this.userInfos.lastname.length > 50
+      ) {
+        this.errors.push(
+          "Nom non valide"
+        );
+      }
+      if (
+        !this.userInfos.firstname ||
+        !regex.test(this.userInfos.firstname) ||
+        this.userInfos.firstname.length > 50
+      ) {
+        this.errors.push(
+          "Prénom non valide"
+        );
+      }
+      if (!this.userInfos.email || !regexmail.test(this.userInfos.email)) {
+        this.errors.push(
+          "Mail non valide"
+        );
+      }
+      if (!this.errors.length) {
+        const formData = new FormData();
+        formData.append("firstname", this.userInfos.firstname);
+        formData.append("lastname", this.userInfos.lastname);
+        formData.append("image", this.image);
+        formData.append("email", this.userInfos.email);
+        this.$store.dispatch("updateOneUser", formData).then(() => {
+          this.$store.dispatch("getOneUser");
+          this.mode = "display";
+        });
+      }
     },
-    onSelect: function() {
+
+    onSelect () {
       this.image = this.$refs.image.files[0];
       console.log(this.image);
+    },
+
+    deleteOneUser () {
+      this.$store.dispatch("deleteProfil");
+      this.$router.push("/");
     },
   },
 };
@@ -121,6 +167,15 @@ export default {
 <style scoped>
 .body {
   height: 100%;
+}
+
+ul{
+  padding: 0px;
+}
+
+.error{
+  color: red;
+  list-style: none;
 }
 
 .position-card {
@@ -150,7 +205,7 @@ export default {
 .coord {
   padding: 20px 0 0 0;
   margin-bottom: 10px;
-  border-bottom: solid 1px;
+  border-bottom: solid 1px red;
 }
 
 .picture {
@@ -216,7 +271,7 @@ export default {
   top: 1px;
 }
 
-.deleteProfil{
+.deleteProfil {
   cursor: pointer;
   background-color: rgb(252, 66, 66);
   color: rgb(255, 255, 255);
@@ -224,19 +279,19 @@ export default {
   border: none;
 }
 
-.deleteProfil:active{
+.deleteProfil:active {
   position: relative;
   top: 1px;
 }
 
-.modif_profil{
+.modif_profil {
   display: flex;
   justify-content: center;
 }
 
 @media (max-width: 1024px) {
-            .profil {
-  width: 70%;
-}
+  .profil {
+    width: 70%;
+  }
 }
 </style>

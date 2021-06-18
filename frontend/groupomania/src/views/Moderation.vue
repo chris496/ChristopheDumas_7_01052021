@@ -1,7 +1,7 @@
 <template>
   <div>
     <navigation />
-    Modération des commentaires utilisateurs
+    <h1 class="title">Modération des commentaires utilisateurs</h1>
     <allComments/>
   </div>
 </template>
@@ -26,7 +26,7 @@ mounted() {
 
       if (
       this.$store.state.auth.userId == "" ||
-      this.$store.state.auth.token == ""
+      this.$store.state.auth.token == "" || this.$store.state.status == "echec"
     ) {
       this.$router.push("/");
     }
@@ -38,8 +38,16 @@ mounted() {
 };
 </script>
 
-<style>
+<style scoped>
 body {
   margin: 0;
+}
+
+.title{
+  margin: 20px 0 40px 0;
+  font-weight: 700;
+  color: red;
+  font-size: 25px;
+
 }
 </style>

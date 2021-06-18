@@ -3,7 +3,7 @@
     <img class="logo" alt="Vue logo" src="../assets/logo.png" />
     <h1>Bienvenue sur votre réseau social groupomania</h1>
     <!-- bascule entre inscription et connexion-->
-    <signup v-if="mode == 'signup'" />
+    <signup v-if="mode == 'signup'" @switchlogin="switchlogin"/>
     <signin v-if="mode == 'signin'" />
 
     <span v-if="mode == 'signup'" class="switchButton" @click="switchlogin()"
@@ -33,10 +33,10 @@ export default {
   },
 
   methods: {
-    switchSubscribe: function() {
+    switchSubscribe () {
       this.mode = "signup";
     },
-    switchlogin: function() {
+    switchlogin () {
       this.mode = "signin";
     },
   },

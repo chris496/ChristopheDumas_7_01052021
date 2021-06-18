@@ -12,7 +12,8 @@ import {
   faSignOutAlt,
   faTrashAlt,
   faTimes,
-  faThumbsUp
+  faThumbsUp,
+  faEdit
 } from "@fortawesome/free-solid-svg-icons";
 
 import { 
@@ -26,7 +27,8 @@ library.add(
   faCommentDots,
   faThumbsUp,
   faTrashAlt,
-  faTimes
+  faTimes,
+  faEdit
 );
 
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";

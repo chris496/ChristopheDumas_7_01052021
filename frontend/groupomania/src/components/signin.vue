@@ -2,7 +2,6 @@
   <div>
     <form>
       <h2>Connexion</h2>
-
       <p>
         <label for="email"></label>
         <input id="email" type="text" v-model="email" placeholder="Email" />
@@ -16,9 +15,7 @@
           placeholder="Mot de passe"
         />
       </p>
-
       <span v-if="status == 'echec'">Email et/ou mot de passe invalide</span>
-
       <button @click.prevent="loginUser()">Connexion</button>
     </form>
   </div>
@@ -41,7 +38,7 @@ export default {
   },
 
   methods: {
-    loginUser: function() {
+    loginUser () {
       this.$store
         .dispatch("login", {
           email: this.email,
@@ -96,7 +93,7 @@ input {
 }
 
 input:focus {
-  border: none
+  border: none;
 }
 
 button {
@@ -114,14 +111,14 @@ button:hover {
 }
 
 @media (max-width: 768px) {
-            form {
-  width: 80%;
-    }
+  form {
+    width: 80%;
+  }
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
-            form {
-  width: 50%;
-    }
-    }
+  form {
+    width: 50%;
+  }
+}
 </style>

@@ -2,7 +2,7 @@
   <div>
     <div class="header">
       <div class="logo">
-        <img src="../../public/images/icon-left-font.png" />
+        <img src="../../public/images/icon-left-font.png" alt="logo"/>
       </div>
       <nav class="navigation">
         <font-awesome-icon
@@ -35,13 +35,13 @@ export default {
     return {};
   },
   methods: {
-    posts: function() {
+    posts () {
       this.$router.push("/posts");
     },
-    profil: function() {
+    profil () {
       this.$router.push("/profil");
     },
-    logout: function() {
+    logout () {
       this.$store.dispatch("logout");
       this.$router.push("/");
     },

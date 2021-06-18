@@ -1,12 +1,17 @@
 <template>
   <div>
+    <!-- formulaire création nouveau post -->
     <form
       @submit.prevent="onSubmit"
       enctype="multipart/form-data"
       v-if="mode == 'newPost'"
       class="formulaire"
     >
-    <font-awesome-icon :icon="['fas', 'times']" class="icon" @click.prevent="closeNewPost()"/>
+      <font-awesome-icon
+        :icon="['fas', 'times']"
+        class="icon"
+        @click.prevent="closeNewPost()"
+      />
 
       <p>
         <label for="title">Titre du post : </label>
@@ -49,14 +54,17 @@ export default {
       mode: "",
       title: "",
       description: "",
-      images: null,
     };
   },
   computed: {
     ...mapState(["auth"]),
   },
   methods: {
-    newPost: function() {
+    createNewPost () {
+      this.mode = "newPost";
+    },
+
+    newPost () {
       this.mode = "";
       const formData = new FormData();
       formData.append("title", this.title);
@@ -64,21 +72,21 @@ export default {
       formData.append("image", this.image);
       formData.append("userId", this.auth.userId);
       this.$store.dispatch("createPost", formData).then(() => {
-        this.$store.dispatch("getPosts")
-      })
-      
+        this.$store.dispatch("getPosts");
+        this.title = "";
+        this.description = "";
+        this.image = "";
+      });
     },
 
-    onSelect: function() {
+    onSelect () {
       this.image = this.$refs.image.files[0];
-      //console.log(this.image);
     },
 
-    createNewPost: function() {
-      this.mode = "newPost";
-    },
-    closeNewPost: function() {
+    closeNewPost () {
       this.mode = "";
+      this.title = "";
+      this.description = "";
     },
   },
 };
@@ -96,7 +104,7 @@ export default {
   padding: 60px 0px 40px 0px;
 }
 
-.icon{
+.icon {
   color: red;
   position: absolute;
   right: 10px;
@@ -104,6 +112,7 @@ export default {
   cursor: pointer;
 }
 
+/* bouton "créer un post" */
 .addpost {
   margin-top: 4px;
   box-shadow: 0px 3px 3px 0px #bdbdbd;
@@ -130,6 +139,7 @@ textarea {
   width: 90%;
 }
 
+/* bouton "publier votre post" */
 .sendpost {
   box-shadow: 0px 3px 3px #bdbdbd;
   background-color: #fff9f9;
@@ -152,18 +162,18 @@ textarea {
 }
 
 @media (max-width: 768px) {
-            .formulaire {
-              position: absolute;
-              top: 30%;
-  width: 80%;
-}
+  .formulaire {
+    position: absolute;
+    top: 30%;
+    width: 80%;
+  }
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
-            .formulaire {
-              position: absolute;
-              top: 40%;
-  width: 80%;
+  .formulaire {
+    position: absolute;
+    top: 40%;
+    width: 80%;
+  }
 }
-    }
 </style>
