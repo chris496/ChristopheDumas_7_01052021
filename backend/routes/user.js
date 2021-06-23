@@ -8,6 +8,6 @@ const multer = require("../middleware/multer");
 
 router.get("/:id", auth, userCtrl.getOneUser);
 router.put("/:id", auth, user_right, multer, userCtrl.updateOneUser);
-router.delete("/:id", auth, userCtrl.deleteOneUser);
+router.delete("/:id", auth, user_right, userCtrl.deleteOneUser);
 
 module.exports = router;
