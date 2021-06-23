@@ -102,16 +102,15 @@ export default createStore({
       }
     },
 
-    getPosts: ({ commit }) => {
-      urlApi
-        .get("post")
-        .then((response) => {
-          commit("posts", response.data);
-        })
-        .catch((error) => {
-          console.log(error);
-          commit("Status", "echec");
-        });
+    getPosts: async ({ commit }) => {
+      try {
+        const response = await urlApi
+          .get("post");
+        commit("posts", response.data);
+      } catch (error) {
+        console.log(error);
+        commit("Status", "echec");
+      }
     },
 
     deletePost: async ({ commit }, post) => {
@@ -138,41 +137,39 @@ export default createStore({
       }
     },
 
-    getOneUser({ commit }) {
+    async getOneUser({ commit }) {
       const userId = this.state.auth.userId;
-      urlApi
-        .get(`user/${userId}`)
-        .then((response) => {
-          commit("userInfos", response.data[0]);
-        })
-        .catch((error) => {
-          console.log(error);
-          commit("Status", "echec");
-        });
+      try {
+        const response = await urlApi
+          .get(`user/${userId}`);
+        commit("userInfos", response.data[0]);
+      } catch (error) {
+        console.log(error);
+        commit("Status", "echec");
+      }
     },
 
-    deleteProfil({ commit }) {
+    async deleteProfil({ commit }) {
       const userId = this.state.auth.userId;
       commit;
-      urlApi.delete(`user/${userId}`).then((response) => {
+      try {
+        const response = await urlApi.delete(`user/${userId}`);
         console.log(response.data);
-      })
-      .catch((error) => {
-          console.log(error);
-        });
+      } catch (error) {
+        console.log(error);
+      }
     },
 
     // gestion des commentaires
-    createComment: ({ commit }, Data) => {
+    createComment: async ({ commit }, Data) => {
       commit;
-      urlApi
-        .post("comment/", Data)
-        .then((response) => {
-          console.log(response.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      try {
+        const response = await urlApi
+          .post("comment/", Data);
+        console.log(response.data);
+      } catch (error) {
+        console.log(error);
+      }
     },
 
     getcomment: async ({ commit }, Data) => {
@@ -194,16 +191,15 @@ export default createStore({
     },
 
     // gestion des likes
-    createlike: ({ commit }, Data) => {
+    createlike: async ({ commit }, Data) => {
       commit;
-      urlApi
-        .post("like/", Data)
-        .then((response) => {
-          console.log(response.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      try {
+        const response = await urlApi
+          .post("like/", Data);
+        console.log(response.data);
+      } catch (error) {
+        console.log(error);
+      }
     },
 
     getlike: async ({ commit }) => {
