@@ -1,4 +1,5 @@
 const connection = require("../config/db.config.js");
+const fs = require("fs");
 
 const emailRegex = /(^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$)/;
 
@@ -16,19 +17,25 @@ exports.getOneUser = (req, res) => {
 
 // modifier les donnéees d'un utilisateur
 exports.updateOneUser = (req, res) => {
+  let photo;
   
-  const User = req.file === undefined ?{
+  if(req.file && req.body.imagedelete){
+    photo =
+    `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
+    const filename = req.body.imagedelete.split("/images/")[1];
+      fs.unlink(`images/${filename}`, () => {
+        console.log("Fichier supprimé !");
+      });
+  }else {
+    photo = req.body.image
+  }
+  
+  const User = {
     firstname : req.body.firstname,
     lastname : req.body.lastname,
     email : req.body.email,  
-  }: {
-    firstname : req.body.firstname,
-    lastname : req.body.lastname,
-    email : req.body.email,
-    photo : 
-      `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
   }
-
+ 
   //verification champs vide, longueur name, regex email
   if (
     User.firstname == "" ||
@@ -52,7 +59,7 @@ exports.updateOneUser = (req, res) => {
       User.firstname,
       User.lastname,
       User.email,
-      User.photo,
+      photo,
       req.params.id,
     ],
     function (err, result) {

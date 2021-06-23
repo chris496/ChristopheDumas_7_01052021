@@ -8,9 +8,10 @@
         class="profil"
       >
         <div class="picture">
-          <img v-if="userInfos.photo" :src="userInfos.photo" alt="photo" />
+          <img v-if="urlImage" :src="urlImage" alt="prévisualisation-photo"/>
+          <img v-else-if="userInfos.photo" :src="userInfos.photo" alt="photo" />
           <img
-            v-if="userInfos.photo == null"
+            v-else-if="userInfos.photo == null"
             src="../../public/images/icon.png"
             alt="logo"
           />
@@ -90,6 +91,7 @@ export default {
   data: function() {
     return {
       errors: [],
+      urlImage: "",
       mode: "display",
     };
   },
@@ -107,6 +109,7 @@ export default {
     cancelUpdateOneUser () {
       this.errors = [];
       this.mode = "display";
+      this.urlImage = ""
       this.$store.dispatch("getOneUser");
     },
     updateOneUser () {
@@ -142,7 +145,8 @@ export default {
         const formData = new FormData();
         formData.append("firstname", this.userInfos.firstname);
         formData.append("lastname", this.userInfos.lastname);
-        formData.append("image", this.image);
+        formData.append("image", this.image?this.image:this.userInfos.photo);
+        formData.append("imagedelete", this.userInfos.photo);
         formData.append("email", this.userInfos.email);
         this.$store.dispatch("updateOneUser", formData).then(() => {
           this.$store.dispatch("getOneUser");
@@ -153,7 +157,8 @@ export default {
 
     onSelect () {
       this.image = this.$refs.image.files[0];
-      console.log(this.image);
+      console.log(this.image)
+      this.urlImage = URL.createObjectURL(this.image);
     },
 
     deleteOneUser () {
