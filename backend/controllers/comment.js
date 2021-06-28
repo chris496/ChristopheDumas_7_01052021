@@ -7,7 +7,7 @@ exports.getComment = (req, res) => {
     req.params.id,
     function (err, result) {
       if (err) {
-        return res.status(401).json({ error: "erreur" });
+        return res.status(401).json({ error: "aucun post pour cet utilisateur" });
       } else res.send(result);
     }
   );
@@ -19,7 +19,7 @@ exports.getAllComment = (req, res) => {
     "SELECT firstname, lastname, photo, isadmin, comment.* FROM user INNER JOIN comment ON user.id = comment.user ORDER BY added_date DESC",
     function (err, result) {
       if (err) {
-        return res.status(401).json({ error: "erreur" });
+        return res.status(401).json({ error: "aucun post" });
       } else res.send(result);
     }
   );
@@ -34,7 +34,7 @@ exports.postComment = (req, res) => {
     added_date: new Date(),
   };
 
-  if (comment.description == "") {
+  if (comment.description.length <= 0) {
     return res.status(400).json({ error: "erreur champs comment vide" });
   }
 
@@ -43,7 +43,7 @@ exports.postComment = (req, res) => {
     [comment, req.params.id],
     function (err, result) {
       if (err) {
-        return res.status(401).json({ error: "erreur" });
+        return res.status(401).json({ error: "commentaire non ajouté" });
       } else res.send(result);
     }
   );
@@ -56,7 +56,7 @@ exports.deleteComment = (req, res) => {
     [req.params.id],
     function (err, result) {
       if (err) {
-        return res.status(401).json({ error: "erreur" });
+        return res.status(401).json({ error: "commentaire introuvable" });
       } else res.send(result);
     }
   );

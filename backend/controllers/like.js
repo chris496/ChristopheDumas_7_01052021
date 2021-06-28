@@ -8,7 +8,7 @@ exports.like = (req, res) => {
   if (req.body.like == 0) {
     connection.query("INSERT INTO `like` SET ?", like, function (err, result) {
       if (err) {
-        return res.status(401).json({ error: "erreur" });
+        return res.status(401).json({ error: "like non ajouté" });
       } else res.send(result);
     });
   } else if (req.body.like == 1) {
@@ -17,7 +17,7 @@ exports.like = (req, res) => {
       [req.body.user, req.body.post],
       function (err, result) {
         if (err) {
-          return res.status(401).json({ error: "impossible de supprimer" });
+          return res.status(401).json({ error: "suppression impossible" });
         } else res.send(result);
       }
     );
@@ -26,7 +26,8 @@ exports.like = (req, res) => {
 
 exports.getlike = (req, res) => {
   connection.query("SELECT * FROM `like`", function (err, result) {
-    if (err) throw err;
-    else res.send(result);
+    if (err) {
+      return res.status(401).json({ error: "récupération like impossible" });
+    } else res.send(result);
   });
 };

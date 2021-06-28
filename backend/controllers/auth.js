@@ -19,16 +19,16 @@ exports.signup = (req, res) => {
 
       //verification champs vide, longueur name, regex email
       if (
-        User.firstname == "" ||
-        User.lastname == "" ||
-        User.email == "" ||
-        User.password == ""
+        User.firstname.length <= 0 ||
+        User.lastname.length <= 0 ||
+        User.email.length <= 0 ||
+        User.password.length <= 0
       ) {
         return res.status(400).json({ error: "erreur champs vide" });
       }
 
       if (User.firstname.length <= 2 || User.lastname.length <= 2) {
-        return res.status(400).json({ error: "erreur trop court" });
+        return res.status(400).json({ error: "erreur nom trop court" });
       }
 
       if (!emailRegex.test(User.email)) {
@@ -37,11 +37,11 @@ exports.signup = (req, res) => {
 
       connection.query("INSERT INTO user SET ?", User, function (err, result) {
         if (err) {
-          return res.status(401).json({ error: "erreur d'insertion" });
+          return res.status(401).json({ error: "Utilisateur déjà existant" });
         } else res.status(201).send(result);
       });
     })
-    .catch((error) => res.status(500).json({ error }));
+    .catch((error) => res.status(500).json({ error: "Erreur serveur" }));
 };
 
 // connexion de l'utilisateur
@@ -68,7 +68,7 @@ exports.login = (req, res) => {
               }),
             });
           })
-          .catch((error) => res.status(500).json({ error: "erreur" }));
+          .catch((error) => res.status(500).json({ error: "Erreur serveur" }));
     }
   );
 };

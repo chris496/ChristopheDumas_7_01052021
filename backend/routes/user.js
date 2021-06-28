@@ -3,11 +3,11 @@ const router = express.Router();
 const userCtrl = require("../controllers/user");
 
 const auth = require("../middleware/auth");
-const user_right = require("../middleware/user_right");
+const right = require("../middleware/right");
 const multer = require("../middleware/multer");
 
 router.get("/:id", auth, userCtrl.getOneUser);
-router.put("/:id", auth, user_right, multer, userCtrl.updateOneUser);
-router.delete("/:id", auth, user_right, userCtrl.deleteOneUser);
+router.put("/:id", auth, right.user_right, multer, userCtrl.updateOneUser);
+router.delete("/:id", auth, right.user_right, userCtrl.deleteOneUser);
 
 module.exports = router;

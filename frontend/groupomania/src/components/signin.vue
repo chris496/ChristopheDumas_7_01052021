@@ -76,7 +76,6 @@ h2 {
   font-weight: 100;
   padding: 20px;
   margin: -30px -30px 30px -30px;
-  /*border-radius: 1rem 1rem 0 0;*/
 }
 
 input {

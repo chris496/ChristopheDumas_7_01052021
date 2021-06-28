@@ -47,7 +47,6 @@ export default {
     this.$store.dispatch("getallcomment");
     this.$store.dispatch("getlike");
     this.$store.dispatch("getOneUser");
-
     //déconnexion automatique si user ou token vide ou timeout
     if (
       this.$store.state.auth.userId == "" ||

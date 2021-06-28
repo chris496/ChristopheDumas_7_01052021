@@ -32,14 +32,6 @@
         />
         <span class="cpt">{{ compteurComments }}</span>
       </div>
-      <!-- bouton modification post -->
-      <font-awesome-icon
-        v-if="auth.userId == user || userInfos.isadmin == 1"
-        :icon="['fas', 'edit']"
-        class="icon"
-        title="Modifier le post"
-        @click.prevent="deletePost()"
-      />
       <!-- bouton supprimer post -->
       <font-awesome-icon
         v-if="auth.userId == user || userInfos.isadmin == 1"

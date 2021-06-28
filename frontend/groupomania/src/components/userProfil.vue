@@ -190,8 +190,6 @@ ul{
 
 .profil {
   background-color: rgba(255, 255, 255, 0.418);
-  /*border-radius: 20px;*/
-  /*border: 10px ridge rgba(196, 171, 171, 0.822);*/
   box-shadow: 10px 15px 20px rgba(0, 0, 0, 0.22);
   width: 40%;
   display: flex;

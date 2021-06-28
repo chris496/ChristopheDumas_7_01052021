@@ -23,7 +23,6 @@ export default {
   },
 mounted() {
       this.$store.dispatch("getallcomment")
-
       if (
       this.$store.state.auth.userId == "" ||
       this.$store.state.auth.token == "" || this.$store.state.status == "echec"

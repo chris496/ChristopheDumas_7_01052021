@@ -59,7 +59,7 @@ export default {
 }
 
 @media (max-width: 768px) {
-            h1 {
+  h1 {
   margin: 0;
   font-size: 18px;
     }

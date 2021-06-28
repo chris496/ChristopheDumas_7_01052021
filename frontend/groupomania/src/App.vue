@@ -1,9 +1,5 @@
 <template>
   <div id="nav">
-    <!--<router-link to="/">Home</router-link> |
-    <router-link to="/posts">Posts</router-link> |
-    <router-link to="/profil">Profil</router-link> |
-    <router-link to="/moderation">Moderation</router-link>-->
     <router-view />
   </div>
 </template>

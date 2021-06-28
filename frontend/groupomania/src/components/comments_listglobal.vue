@@ -22,13 +22,6 @@
           />
         </div>
         <p class="commentaires_text">{{ allcomment.description }}</p>
-        <!--<font-awesome-icon
-          :icon="['fas', 'trash-alt']"
-          class="icon"
-          title="Supprimer"
-          @click.prevent="deleteComment(allcomment)"
-          v-if="userInfos.isadmin == 1"
-        />-->
         <button title="Supprimer" @click.prevent="deleteComment(allcomment)" v-if="userInfos.isadmin == 1"></button>
       </div>
       <span class="comment_infos"
@@ -61,8 +54,6 @@ export default {
     },
 
     deleteComment: function(allcomment) {
-      //console.log(allcomment);
-      //console.log(this.allcomments.findIndex((el) => el.id === allcomment.id));
       const test = this.allcomments.findIndex(el => el.id === allcomment.id)
       this.allcomments.splice(test, 1);
       this.$store.dispatch("deleteComment", allcomment);
@@ -144,27 +135,3 @@ button:active {
   }
 }
 </style>
-
-<!--
-        <div
-          class="comments_post"
-          v-for="(comment, index) in comments.filter((comment) => {
-            return comment.post == id
-          })"
-          :key="index"
-        >
-        <div class="comment">
-          <div class="comment_avatar"><img :src="comment.photo" /></div>
-          <p class="comment_text">{{ comment.description }}</p>
-          <font-awesome-icon
-            :icon="['fas', 'trash-alt']"
-            class="icon fa-sm"
-            title="Supprimer"
-            @click.prevent="deleteComment(comment)"
-            v-if="auth.userId == comment.user || userInfos.isadmin == 1"
-          />
-        </div>  
-          <span class="comment_infos">{{ comment.firstname }} {{ comment.lastname }}</span>
-          <span class="comment_infos">{{ comment.added_date }}</span>
-        </div>
-      -->

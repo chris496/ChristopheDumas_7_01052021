@@ -9,7 +9,9 @@ exports.getOneUser = (req, res) => {
     "SELECT id, firstname, lastname, email, photo, added_date, modif_date, isadmin FROM user WHERE id=?",
     req.params.id,
     function (err, result) {
-      if (err) throw err;
+      if (err) {
+        return res.status(401).json({ error: "création user impossible" });
+      }
       else res.send(result);
     }
   );
@@ -38,15 +40,15 @@ exports.updateOneUser = (req, res) => {
  
   //verification champs vide, longueur name, regex email
   if (
-    User.firstname == "" ||
-    User.lastname == "" ||
-    User.email == ""
+    User.firstname.length <= 0 ||
+    User.lastname.length <= 0 ||
+    User.email.length <= 0
   ) {
     return res.status(400).json({ error: "erreur champs vide" });
   }
 
   if (User.firstname.length <= 2 || User.lastname.length <= 2) {
-    return res.status(400).json({ error: "erreur trop court" });
+    return res.status(400).json({ error: "erreur nom trop court" });
   }
 
   if (!emailRegex.test(User.email)) {
@@ -64,7 +66,7 @@ exports.updateOneUser = (req, res) => {
     ],
     function (err, result) {
       if (err) {
-        return res.status(401).json({ error: "erreur" });
+        return res.status(401).json({ error: "modification utilisateur impossible" });
       } else res.send(result);
     }
   );
@@ -77,7 +79,7 @@ exports.deleteOneUser = (req, res) => {
     [req.params.id],
     function (err, result) {
       if (err) {
-        return res.status(401).json({ error: "erreur" });
+        return res.status(401).json({ error: "suppression impossible" });
       } else res.send(result);
     }
   );

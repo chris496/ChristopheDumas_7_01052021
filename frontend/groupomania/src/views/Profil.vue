@@ -14,9 +14,6 @@ import { mapState } from "vuex";
 export default {
   name: "Profil",
   mounted() {
-    console.log(this.$store.state.status)
-    //this.$store.dispatch("getOneUser");
-    
     //déconnexion automatique si user ou token vide
     if (
       this.$store.state.auth.userId == "" ||
